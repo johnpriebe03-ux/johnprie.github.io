@@ -1,22 +1,448 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be My Valentine?</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Für dich 💌</title>
+
+<!--
+=====================================================================
+  ✏️  HIER TRÄGST DU DEINEN TEXT EIN — suche nach "BEARBEITE HIER"
+  Es gibt 3 Stellen:
+   1) Der Titel auf dem Umschlag (ganz unten im <body>, Sektion "COVER")
+   2) Die Anrede + Absätze des Briefs (Sektion "BRIEF-INHALT")
+   3) Deine Unterschrift (Sektion "BRIEF-INHALT", ganz unten)
+  Alles andere (Style, Deko, Animation) musst du nicht anfassen.
+=====================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --blush:        #ffe9f1;
+    --blush-deep:   #ffd3e4;
+    --rose:         #f3a9c4;
+    --rose-deep:    #e2789f;
+    --raspberry:    #c85b82;
+    --cream:        #fffaf7;
+    --lily-pink:    #f7c6dd;
+    --lily-center:  #f6e27a;
+    --dachshund:    #a9703f;
+    --dachshund-dk: #7d4f28;
+    --bunny:        #fffdfa;
+    --bunny-shade:  #f6d6e2;
+    --ink:          #7a3b52;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0; min-height:100vh; width:100%;
+    font-family:'Quicksand', sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, var(--blush-deep) 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, var(--lily-pink) 0%, transparent 40%),
+      linear-gradient(160deg, var(--blush) 0%, #fff5f9 55%, var(--blush) 100%);
+    color:var(--ink);
+    overflow-x:hidden;
+    min-height:100dvh;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  /* ---------- floating ambient deco ---------- */
+  .sky{
+    position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+  }
+  .floatie{
+    position:absolute; opacity:0.85;
+    animation: drift 14s ease-in-out infinite;
+  }
+  .floatie.slow{ animation-duration:20s; }
+  .floatie.rev{ animation-direction:reverse; }
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-22px) rotate(4deg); }
+  }
+
+  .heart-trail{
+    position:fixed; bottom:-40px; z-index:1; pointer-events:none;
+    opacity:0; font-size:22px;
+    animation: rise 7s linear infinite;
+    color:var(--rose-deep);
+  }
+  @keyframes rise{
+    0%{ opacity:0; transform:translateY(0) scale(0.6); }
+    10%{ opacity:0.8; }
+    90%{ opacity:0.5; }
+    100%{ opacity:0; transform:translateY(-100vh) scale(1.1); }
+  }
+
+  /* ---------- layout wrapper ---------- */
+  .stage{
+    position:relative; z-index:2;
+    min-height:100vh; min-height:100dvh;
+    display:flex; align-items:center; justify-content:center;
+    padding:32px 16px;
+  }
+
+  /* ================= ENVELOPE / COVER ================= */
+  #cover{
+    display:flex; flex-direction:column; align-items:center; gap:22px;
+    text-align:center;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  #cover.hide{
+    opacity:0; transform:scale(0.9);
+    pointer-events:none;
+    position:absolute;
+  }
+
+  .envelope-wrap{
+    position:relative;
+    width:min(320px, 80vw);
+    cursor:pointer;
+    filter:drop-shadow(0 18px 30px rgba(200,91,130,0.28));
+  }
+  .envelope-wrap:hover .envelope-flap{ transform:rotateX(-8deg); }
+  .envelope-wrap:hover .seal{ transform:translate(-50%,-50%) scale(1.08); }
+
+  .envelope{
+    position:relative; width:100%; aspect-ratio: 3/2;
+    background: linear-gradient(180deg, var(--cream), #fff1f6);
+    border-radius:14px;
+    border:2px solid var(--rose);
+    overflow:hidden;
+  }
+  .envelope-flap{
+    position:absolute; top:0; left:0; width:100%; height:60%;
+    background:linear-gradient(160deg, var(--rose), var(--rose-deep));
+    clip-path:polygon(0 0, 100% 0, 50% 68%);
+    transform-origin:top center;
+    transition:transform 0.5s ease;
+  }
+  .envelope-shadow-fold{
+    position:absolute; bottom:0; left:0; width:100%; height:55%;
+    background:linear-gradient(0deg, var(--blush-deep), transparent);
+    clip-path:polygon(0 100%, 50% 25%, 100% 100%);
+    opacity:0.6;
+  }
+  .seal{
+    position:absolute; top:56%; left:50%; transform:translate(-50%,-50%);
+    width:56px; height:56px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--raspberry), #a5395e 70%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(150,50,80,0.4), inset 0 -3px 6px rgba(0,0,0,0.25);
+    transition:transform 0.3s ease;
+    z-index:3;
+  }
+  .seal svg{ width:26px; height:26px; }
+
+  .cover-title{
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(28px,6vw,42px);
+    color:var(--raspberry);
+    margin:0;
+  }
+  .cover-sub{
+    font-size:15px; color:var(--ink); opacity:0.75; margin:0;
+    letter-spacing:0.3px;
+  }
+
+  .dog-peek{
+    width:120px; margin-top:-6px;
+    animation: wag 2.4s ease-in-out infinite;
+    transform-origin:80% 90%;
+  }
+  @keyframes wag{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(3deg); }
+  }
+
+  /* ================= LETTER ================= */
+  #letter-scene{
+    width:100%; max-width:640px;
+    opacity:0; transform:translateY(30px) scale(0.97);
+    pointer-events:none;
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  #letter-scene.show{
+    opacity:1; transform:translateY(0) scale(1);
+    pointer-events:auto;
+  }
+
+  .paper{
+    position:relative;
+    background:
+      linear-gradient(var(--cream), var(--cream));
+    border-radius:18px;
+    padding:clamp(28px,6vw,56px) clamp(22px,6vw,52px) 40px;
+    box-shadow:
+      0 2px 0 var(--rose),
+      0 25px 50px -12px rgba(198,90,130,0.35),
+      0 0 0 1px rgba(230,150,180,0.4);
+    border:2px solid #ffffff;
+  }
+  .paper::before{
+    content:"";
+    position:absolute; inset:10px;
+    border:1.5px dashed var(--rose);
+    border-radius:12px;
+    pointer-events:none;
+    opacity:0.55;
+  }
+
+  .corner-lily{
+    position:absolute; width:74px; height:74px;
+    opacity:0.95;
+  }
+  .corner-lily.tl{ top:-18px; left:-18px; transform:rotate(-15deg); }
+  .corner-lily.br{ bottom:-18px; right:-18px; transform:rotate(160deg); }
+
+  .letter-header{
+    display:flex; align-items:center; justify-content:center;
+    gap:10px; margin-bottom:6px;
+  }
+  .letter-header svg{ width:34px; height:34px; }
+
+  .greeting{
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(30px,5.5vw,44px);
+    color:var(--raspberry);
+    text-align:center;
+    margin:6px 0 22px;
+  }
+
+  .letter-body{
+    font-size:17px; line-height:1.85;
+    color:#5b3346;
+  }
+  .letter-body p{ margin:0 0 18px; }
+  .letter-body p:first-of-type::first-letter{
+    font-family:'Dancing Script', cursive;
+    font-size:2.4em; color:var(--raspberry);
+    float:left; line-height:1; margin-right:6px; margin-top:2px;
+  }
+
+  .signature{
+    margin-top:26px; text-align:right;
+    font-family:'Dancing Script', cursive;
+    font-size:clamp(24px,4.5vw,34px);
+    color:var(--raspberry);
+  }
+  .signature span{ display:block; font-family:'Quicksand'; font-size:13px; color:var(--ink); opacity:0.7; }
+
+  .critter-row{
+    display:flex; align-items:flex-end; justify-content:center;
+    gap:18px; margin-top:28px;
+  }
+  .critter-row svg{ width:64px; }
+  .critter-row .dachshund-svg{ width:110px; }
+
+  .bunny-bob{ animation: bob 3.4s ease-in-out infinite; }
+  .bunny-bob.d2{ animation-delay:0.6s; }
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
+  footer.note{
+    text-align:center; margin-top:22px; font-size:13px; color:var(--ink); opacity:0.55;
+  }
+
+  @media (max-width:420px){
+    .critter-row{ gap:10px; }
+    .critter-row svg{ width:48px; }
+    .critter-row .dachshund-svg{ width:86px; }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Will you be my Valentine?</h1>
-        <div class="buttons">
-            <button class="yes-button" onclick="handleYesClick()">Yes</button>
-            <button class="no-button" onclick="handleNoClick()">No</button>
+
+<!-- ambient floating decoration (lilies, hearts, paws) -->
+<div class="sky" id="sky"></div>
+
+<div class="stage">
+
+  <!-- ================= COVER / ENVELOPE ================= -->
+  <div id="cover">
+    <div class="envelope-wrap" onclick="openLetter()">
+      <div class="envelope">
+        <div class="envelope-shadow-fold"></div>
+        <div class="envelope-flap"></div>
+        <div class="seal">
+          <svg viewBox="0 0 24 24" fill="#ffe3ec"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.8 5.3 4.1 7.5 3.6 9.7 4.6 12 7c2.3-2.4 4.5-3.4 6.7-2.9C22 4.8 23.6 8.2 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
         </div>
-        <div class="gif_container">
-            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW5lenZyZHI5OXM2eW95b3pmMG40cWVrMDhtNjVuM3A4dGNxa2g2dSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/VM1fcpu2bKs1e2Kdbj/giphy.gif" alt="Cute GIF">
-        </div>
+      </div>
+      <img class="dog-peek" alt="Dackel guckt aus dem Umschlag"
+        src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cellipse cx='100' cy='72' rx='70' ry='22' fill='%23a9703f'/%3E%3Cellipse cx='40' cy='55' rx='22' ry='18' fill='%23a9703f'/%3E%3Cellipse cx='30' cy='40' rx='9' ry='16' fill='%237d4f28' transform='rotate(-20 30 40)'/%3E%3Ccircle cx='34' cy='52' r='3' fill='%232a1810'/%3E%3Cellipse cx='24' cy='60' rx='5' ry='4' fill='%232a1810'/%3E%3C/svg%3E">
     </div>
-    <script src="script.js"></script>
+
+    <!-- ============ BEARBEITE HIER: Titel & Untertitel auf dem Umschlag ============ -->
+    <p class="cover-title">Für meine Maus 🐭 🌸</p>
+    <p class="cover-sub">klick auf den Brief xoxo</p>
+    <!-- ============================================================================ -->
+  </div>
+
+  <!-- ================= LETTER ================= -->
+  <div id="letter-scene">
+    <div class="paper">
+      <svg class="corner-lily tl" viewBox="0 0 100 100">
+        <g>
+          <path d="M50 55 C20 45,10 15,25 5 C35 20,45 35,50 55Z" fill="#f7c6dd"/>
+          <path d="M50 55 C80 45,90 15,75 5 C65 20,55 35,50 55Z" fill="#f7c6dd"/>
+          <path d="M50 55 C55 25,50 5,40 0 C38 20,42 38,50 55Z" fill="#f6a9cf"/>
+          <path d="M50 55 C45 25,50 5,60 0 C62 20,58 38,50 55Z" fill="#f6a9cf"/>
+          <circle cx="50" cy="55" r="7" fill="#f6e27a"/>
+        </g>
+      </svg>
+      <svg class="corner-lily br" viewBox="0 0 100 100">
+        <g>
+          <path d="M50 55 C20 45,10 15,25 5 C35 20,45 35,50 55Z" fill="#f7c6dd"/>
+          <path d="M50 55 C80 45,90 15,75 5 C65 20,55 35,50 55Z" fill="#f7c6dd"/>
+          <path d="M50 55 C55 25,50 5,40 0 C38 20,42 38,50 55Z" fill="#f6a9cf"/>
+          <path d="M50 55 C45 25,50 5,60 0 C62 20,58 38,50 55Z" fill="#f6a9cf"/>
+          <circle cx="50" cy="55" r="7" fill="#f6e27a"/>
+        </g>
+      </svg>
+
+      <div class="letter-header">
+        <svg viewBox="0 0 24 24" fill="#e2789f"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.8 5.3 4.1 7.5 3.6 9.7 4.6 12 7c2.3-2.4 4.5-3.4 6.7-2.9C22 4.8 23.6 8.2 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+        <svg viewBox="0 0 24 24" fill="#e2789f"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.8 5.3 4.1 7.5 3.6 9.7 4.6 12 7c2.3-2.4 4.5-3.4 6.7-2.9C22 4.8 23.6 8.2 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+        <svg viewBox="0 0 24 24" fill="#e2789f"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.8 5.3 4.1 7.5 3.6 9.7 4.6 12 7c2.3-2.4 4.5-3.4 6.7-2.9C22 4.8 23.6 8.2 22 11.7 19.5 16.4 12 21 12 21z"/></svg>
+      </div>
+
+      <!-- ==================== BEARBEITE HIER: BRIEF-INHALT ==================== -->
+      <p class="greeting">Liebe Leni,</p>
+
+      <div class="letter-body">
+        <p>
+          gerade ist diese nervige Prüfungsphase und ich schreibe dir, um dir
+          Kraft und Mut zugeben diese zu überstehen. Du bist eine super schlaue und ambitionierte Frau und ich weiß,
+          wie sehr du dich da reinhängst! Du kannst das alles schaffen und du wirst das alles schaffen!
+        </p>
+        <p>
+          Verlier bitte nicht den glauben an dich - ich glaube nämlich an dich und weiß, weiß
+          dass du das rocken wirst! Nicht lange, dann ist das auch wieder vorbei.
+        </p>
+        <p>
+          HDGDDDL, du kannst das alles ich glaube an dich und liebe dich mein Schatz. Thinking of you.
+          Und umso mehr freue ich mich, auf das was auf diese kack Phase folgt - uns gemeinsam hihihihihihihihih
+        </p>
+      </div>
+
+      <p class="signature">
+        Hab dich lieber,<br>
+        John
+        <span>mit unfassbar viel Liebe xoxoxoxoxxxoxoxoxoxoxo</span>
+      </p>
+      <!-- ======================================================================= -->
+
+      <div class="critter-row">
+        <!-- generischer kawaii Hase 1 -->
+        <svg class="bunny-bob" viewBox="0 0 100 100">
+          <ellipse cx="35" cy="20" rx="8" ry="24" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2"/>
+          <ellipse cx="65" cy="20" rx="8" ry="24" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2"/>
+          <ellipse cx="35" cy="22" rx="3.5" ry="14" fill="#f6d6e2"/>
+          <ellipse cx="65" cy="22" rx="3.5" ry="14" fill="#f6d6e2"/>
+          <circle cx="50" cy="60" r="32" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2"/>
+          <circle cx="40" cy="55" r="2.6" fill="#5b3346"/>
+          <circle cx="60" cy="55" r="2.6" fill="#5b3346"/>
+          <ellipse cx="50" cy="65" rx="4" ry="3" fill="#f0a5c1"/>
+          <path d="M42 70 Q50 76 58 70" stroke="#5b3346" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="26" cy="66" r="6" fill="#fbdde8"/>
+          <circle cx="74" cy="66" r="6" fill="#fbdde8"/>
+        </svg>
+
+        <!-- Dackel -->
+        <svg class="dachshund-svg" viewBox="0 0 220 100">
+          <ellipse cx="110" cy="70" rx="90" ry="22" fill="#a9703f"/>
+          <rect x="20" y="55" width="180" height="20" rx="10" fill="#a9703f"/>
+          <ellipse cx="30" cy="65" rx="8" ry="16" fill="#7d4f28"/>
+          <ellipse cx="190" cy="65" rx="8" ry="16" fill="#7d4f28"/>
+          <ellipse cx="185" cy="45" rx="26" ry="22" fill="#a9703f"/>
+          <ellipse cx="168" cy="30" rx="9" ry="18" fill="#7d4f28" transform="rotate(-25 168 30)"/>
+          <ellipse cx="203" cy="30" rx="9" ry="18" fill="#7d4f28" transform="rotate(20 203 30)"/>
+          <circle cx="178" cy="42" r="3" fill="#2a1810"/>
+          <circle cx="196" cy="42" r="3" fill="#2a1810"/>
+          <ellipse cx="196" cy="52" rx="6" ry="4" fill="#2a1810"/>
+          <path d="M20 65 Q5 55 8 70" stroke="#7d4f28" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </svg>
+
+        <!-- generischer kawaii Hase 2 -->
+        <svg class="bunny-bob d2" viewBox="0 0 100 100">
+          <ellipse cx="38" cy="18" rx="7" ry="22" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2" transform="rotate(-10 38 18)"/>
+          <ellipse cx="62" cy="18" rx="7" ry="22" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2" transform="rotate(10 62 18)"/>
+          <circle cx="50" cy="60" r="30" fill="#fffdfa" stroke="#f0c6d6" stroke-width="2"/>
+          <circle cx="41" cy="56" r="2.4" fill="#5b3346"/>
+          <circle cx="59" cy="56" r="2.4" fill="#5b3346"/>
+          <ellipse cx="50" cy="64" rx="3.5" ry="2.6" fill="#f0a5c1"/>
+          <path d="M43 68 Q50 73 57 68" stroke="#5b3346" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M50 66 L50 70" stroke="#5b3346" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <footer class="note">gemacht mit 💗 für dich</footer>
+  </div>
+
+</div>
+
+<script>
+  function openLetter(){
+    document.getElementById('cover').classList.add('hide');
+    setTimeout(()=>{
+      document.getElementById('letter-scene').classList.add('show');
+    }, 150);
+  }
+
+  // ---- ambient background: soft floating lilies + rising hearts + paw prints ----
+  const sky = document.getElementById('sky');
+
+  function lilySVG(size){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+      <path d="M50 55 C20 45,10 15,25 5 C35 20,45 35,50 55Z" fill="#f7c6dd" opacity="0.9"/>
+      <path d="M50 55 C80 45,90 15,75 5 C65 20,55 35,50 55Z" fill="#f7c6dd" opacity="0.9"/>
+      <path d="M50 55 C55 25,50 5,40 0 C38 20,42 38,50 55Z" fill="#f6a9cf" opacity="0.9"/>
+      <path d="M50 55 C45 25,50 5,60 0 C62 20,58 38,50 55Z" fill="#f6a9cf" opacity="0.9"/>
+      <circle cx="50" cy="55" r="7" fill="#f6e27a"/>
+    </svg>`;
+  }
+
+  const spots = [
+    {top:'6%', left:'6%', size:64, cls:''},
+    {top:'70%', left:'4%', size:48, cls:'slow'},
+    {top:'12%', left:'88%', size:56, cls:'rev'},
+    {top:'78%', left:'90%', size:70, cls:'slow rev'},
+    {top:'40%', left:'2%', size:36, cls:''},
+    {top:'55%', left:'94%', size:40, cls:'slow'},
+  ];
+  spots.forEach(s=>{
+    const d = document.createElement('div');
+    d.className = 'floatie ' + s.cls;
+    d.style.top = s.top; d.style.left = s.left;
+    d.innerHTML = lilySVG(s.size);
+    sky.appendChild(d);
+  });
+
+  // gentle rising hearts
+  const heartChars = ['💗','🌸','💕'];
+  function spawnHeart(){
+    const h = document.createElement('div');
+    h.className = 'heart-trail';
+    h.style.left = (Math.random()*90 + 3) + 'vw';
+    h.style.animationDuration = (6 + Math.random()*5) + 's';
+    h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+    sky.appendChild(h);
+    setTimeout(()=>h.remove(), 12000);
+  }
+  setInterval(spawnHeart, 1800);
+  for(let i=0;i<3;i++) setTimeout(spawnHeart, i*600);
+</script>
+
 </body>
 </html>
